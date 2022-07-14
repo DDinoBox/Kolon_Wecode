@@ -123,7 +123,7 @@ class EstimateListView(View):
                 new_end_date = end_date + data_delta
                 q &= Q(sales_process__estimate__created_at__range=[start_date, new_end_date])
             
-            q |= Q(branch_id=dealer.branch_id)
+            q &= Q(branch_id=dealer.branch_id)
             
             quote_notifications = QuoteNotification.objects.filter(q).distinct().order_by('-id')[offset:offset+limit]
             # 해당 지점의 Sales Consultant 이름

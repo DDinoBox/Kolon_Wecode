@@ -1,24 +1,21 @@
-#!/bin/bash
+#!/bin/sh
 
-echo "DEBUG=$DEBUG" > .env
-echo "SECRET_KEY=$SECRET_KEY" >> .env
-echo "ALLOWED_HOSTS=$ALLOWED_HOSTS" >> .env
-echo "DB_NAME=$DB_NAME" >> .env
-echo "DB_USER=$DB_USER" >> .env
-echo "DB_PASSWORD=$DB_PASSWORD" >> .env
-echo "DB_HOST=$DB_HOST" >> .env
-echo "DB_PORT=$DB_PORT" >> .env
-echo "API_KEY=$API_KEY" >> .env
-echo "KAKAO_APPKEY=$KAKAO_APPKEY" >> .env
-echo "KAKAO_REDIRECT_URI=$KAKAO_REDIRECT_URI" >> .env
+echo "DEBUG=True" > .env
+echo "SECRET_KEY='django-insecure-^evo70qnet(08&^n50c^*nknhbm)3-8am2b$_0_0d8n#u##l2('" >> .env
+echo "ALLOWED_HOSTS=*" >> .env
+echo "DB_NAME=my_car" >> .env
+echo "DB_USER=kolon" >> .env
+echo "DB_PASSWORD=wecode" >> .env
+echo "DB_HOST=selling_my_car_db" >> .env
+echo "DB_PORT=3306" >> .env
+echo "API_KEY='ecf899e71cb8d76d0534c9ec7b3f1c32'" >> .env
+echo "KAKAO_APPKEY='5ff7b7a18b63ba62b62b81f7ea698a0a'" >> .env
+echo "KAKAO_REDIRECT_URI='http://10.133.30.30:3000/KakaoLogin'" >> .env
 
-# Migrate Database
 python3 manage.py migrate --noinput
 
-# Collect Staticfiles
 python3 manage.py collectstatic --noinput
 
-# Run Gunicorn (WSGI Server)
-gunicorn --bind 0.0.0.0:8080 kolon_wecode.wsgi:application
+gunicorn --bind 0.0.0.0:8088 kolon_wecode.wsgi:application
 
 nginx -g 'daemon off;'

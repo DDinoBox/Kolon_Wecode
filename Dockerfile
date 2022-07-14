@@ -14,6 +14,8 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 8080
+EXPOSE 8088
 
-ENTRYPOINT .api_entrypoint.sh
+RUN chmod +x /usr/src/app/api_entrypoint.sh
+
+ENTRYPOINT ["/usr/src/app/api_entrypoint.sh"]
