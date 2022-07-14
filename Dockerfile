@@ -18,4 +18,4 @@ EXPOSE 8088
 
 RUN chmod +x /usr/src/app/api_entrypoint.sh
 
-ENTRYPOINT ["/usr/src/app/api_entrypoint.sh"]
+ENTRYPOINT ["bash", "-l", "/usr/src/app/api_entrypoint.sh"]
