@@ -111,6 +111,10 @@ Python, Django, MySQL
 ### API DOC
 <a href="https://hyein-resume.notion.site/API-a6092a6daf9b449599b095698eb7cbc7">노션</a> 을 이용해 엔드포인트 정의 및 공유
 
+## 👉 Frontend Repository
+[프론트엔드 레포지토리 바로가기](https://github.com/DevSeulgi/selling-my-car)
+
+<br/>
 ## Demo Video
 * 전체 영상을 보려면 gif를 클릭해주세요👇
 [![readme_sample3](https://user-images.githubusercontent.com/97112697/179683290-d65fb42d-3846-438b-9ba6-12df295fd973.gif)](https://youtu.be/)
