@@ -56,7 +56,7 @@
 
 ## 기술 스택 및 구현 기능
 ### 적용 기술
-Python, Django, MySQL
+Python, Django, MariaDB
 
 ### 백엔드 업무 담당
 최혜인 - DB 모델링, 고객 로그인 API, 딜러 회원가입/로그인 API, 견적서 API, 알림 API, 어드민 API <br>
