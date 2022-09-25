@@ -35,17 +35,17 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
-KAKAO_APPKEY = env('KAKAO_APPKEY')
+KAKAO_APPKEY       = env('KAKAO_APPKEY')
 KAKAO_REDIRECT_URI = env('KAKAO_REDIRECT_URI')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASSWORD"),
-        'HOST': env("DB_HOST"),
-        'PORT': env.int("DB_PORT")
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env.int('DB_PORT')
     }
 }
 
@@ -66,7 +66,6 @@ INSTALLED_APPS = [
     'testcar',
     'django_cleanup.apps.CleanupConfig' , 
 ]
-
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

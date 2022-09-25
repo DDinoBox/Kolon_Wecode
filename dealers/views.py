@@ -22,7 +22,7 @@ class AdminSignUpView(View):
         try: 
             data            = json.loads(request.body)
             dealer_id       = data['id']
-            PASSWORD_REGEX  = r"^(?=.{8,16}$)(?=.*[a-z])(?=.*[0-9]).*$"
+            PASSWORD_REGEX  = r'^(?=.{8,16}$)(?=.*[a-z])(?=.*[0-9]).*$'
             dealer_password = data['password']
             
             if Dealer.objects.filter(dealer_id = dealer_id):
@@ -89,7 +89,6 @@ class AdminView(View):
         }
         
         return JsonResponse({'results':results}, status=200)
-    
 
 # admin 견적서 리스트 페이지
 class EstimateListView(View):
@@ -108,7 +107,7 @@ class EstimateListView(View):
         
         dealer = request.dealer
         # Sales Consultant일 경우 해당 지점의 견적서만 확인 가능
-        if dealer.level == "Sales Consultant":
+        if dealer.level == 'Sales Consultant':
             q = Q()
             if process_state:
                 q &= Q(sales_process__process_state__in=process_state)
@@ -129,7 +128,7 @@ class EstimateListView(View):
             # 해당 지점의 Sales Consultant 이름
             info = [{
                 'branch' : dealer.branch.name,
-                'dealer': [dealer.name for dealer in dealer.branch.dealer_set.all()]
+                'dealer' : [dealer.name for dealer in dealer.branch.dealer_set.all()]
             }]
             
             results = [{
@@ -157,7 +156,7 @@ class EstimateListView(View):
             
             return JsonResponse({'info': info, 'results': results}, status=200)
         # Showroom Manager일 경우 전체 지점의 견적 확인 가능
-        if dealer.level == "Showroom Manager":
+        if dealer.level == 'Showroom Manager':
             q = Q()
             if process_state:
                 q &= Q(sales_process__process_state__in=process_state)
@@ -214,11 +213,11 @@ class EstimateDetailView(View):
         try:
             dealer = request.dealer
             # Sales Consultant일 경우 해당 지점의 견적서인지 다시 체크
-            if dealer.level == "Sales Consultant":
-                estimate = Estimate.objects.get(id=estimate_id)
+            if dealer.level == 'Sales Consultant':
+                estimate     = Estimate.objects.get(id=estimate_id)
                 branch_check = estimate.salesprocess_set.all()[0].quotenotification_set.filter(branch_id=dealer.branch_id)[0]
                 if branch_check: 
-                    info = [{'dealer': [dealer.name for dealer in dealer.branch.dealer_set.all()]}]
+                    info    = [{'dealer': [dealer.name for dealer in dealer.branch.dealer_set.all()]}]
                     results = {
                         'estimate_id'             : estimate.id,
                         'owner'                   : estimate.car.owner,
@@ -276,7 +275,7 @@ class EstimateDetailView(View):
                     }
                     return JsonResponse({'info': info, 'results': results}, status=200)
             # Showroom Manager일 경우 지점 상관없이 확인 가능
-            if dealer.level == "Showroom Manager":
+            if dealer.level == 'Showroom Manager':
                 estimate = Estimate.objects.get(id=estimate_id)
                 info = [{'dealer': [dealer.name for dealer in dealer.branch.dealer_set.all()]}]
                 results = {
@@ -396,7 +395,7 @@ class ConsultingView(View):
             estimate_id   = data['estimate_id']
             process_state = data['status']
             
-            if dealer.level == "Sales Consultant":
+            if dealer.level == 'Sales Consultant':
                 # 등록되어 있는 컨설팅이 없거나, 지정 된 딜러가 아닐 경우 에러처리
                 if not Consulting.objects.get(estimate_id = estimate_id, dealer_id = dealer.id):
                     return JsonResponse({'message' : 'CONSULTING_DOES_NOT_EXIST'}, status=404)
@@ -406,13 +405,13 @@ class ConsultingView(View):
                 consulting.content = data.get('content', consulting.content)
                 consulting.save()
                 
-                if process_state == "딜러배정":
+                if process_state == '딜러배정':
                     sales_process = SalesProcess.objects.get(estimate_id = estimate_id)
-                    if not sales_process.dealer_consulting and sales_process.selling_requested and sales_process.selling_completed == "null".exists():
+                    if not sales_process.dealer_consulting and sales_process.selling_requested and sales_process.selling_completed == 'null'.exists():
                         return JsonResponse({'message' : 'INVALID_SALES_PROCESS'}, status=404)
                     pass
                 
-                if process_state == "방문상담":
+                if process_state == '방문상담':
                     #판매 프로세스 '방문상담 '시간 작성
                     sales_process = SalesProcess.objects.get(estimate_id = estimate_id)
                     
@@ -426,7 +425,7 @@ class ConsultingView(View):
                         read          = False
                     )
                     
-                if process_state == "판매요청":
+                if process_state == '판매요청':
                     #판매 프로세스 '방문상담 '시간 작성
                     sales_process = SalesProcess.objects.get(estimate_id = estimate_id)
                     
@@ -440,7 +439,7 @@ class ConsultingView(View):
                         read          = False
                     )
                     
-                if process_state == "판매완료":
+                if process_state == '판매완료':
                     #판매 프로세스 '방문상담 '시간 작성
                     sales_process = SalesProcess.objects.get(estimate_id = estimate_id)
                     
@@ -454,7 +453,7 @@ class ConsultingView(View):
                         read          = False
                     )
                     
-                if process_state == "상담종료":
+                if process_state == '상담종료':
                     #판매 프로세스 '상담종료 '시간 작성
                     sales_process = SalesProcess.objects.get(estimate_id = estimate_id)
                     
@@ -469,7 +468,7 @@ class ConsultingView(View):
                     )
                 
             # Showroom Manager일 경우 지점 상관없이 확인 가능
-            if dealer.level == "Showroom Manager":
+            if dealer.level == 'Showroom Manager':
                 # 등록되어 있는 컨설팅이 없을 경우 에러처리
                 if not Consulting.objects.get(estimate_id = estimate_id):
                     return JsonResponse({'message' : 'CONSULTING_DOES_NOT_EXIST'}, status=404)
@@ -479,13 +478,13 @@ class ConsultingView(View):
                 consulting.content = data.get('content', consulting.content)
                 consulting.save()
                 
-                if process_state == "딜러배정":
+                if process_state == '딜러배정':
                     sales_process = SalesProcess.objects.get(estimate_id = estimate_id)
-                    if not sales_process.dealer_consulting and sales_process.selling_requested and sales_process.selling_completed == "null".exists():
+                    if not sales_process.dealer_consulting and sales_process.selling_requested and sales_process.selling_completed == 'null'.exists():
                         return JsonResponse({'message' : 'INVALID_SALES_PROCESS'}, status=404)
                     pass
                 
-                if process_state == "방문상담":
+                if process_state == '방문상담':
                     #판매 프로세스 '방문상담 '시간 작성
                     sales_process = SalesProcess.objects.get(estimate_id = estimate_id)
                     
@@ -499,7 +498,7 @@ class ConsultingView(View):
                         read          = False
                     )
                     
-                if process_state == "판매요청":
+                if process_state == '판매요청':
                     #판매 프로세스 '방문상담 '시간 작성
                     sales_process = SalesProcess.objects.get(estimate_id = estimate_id)
                     
@@ -513,7 +512,7 @@ class ConsultingView(View):
                         read          = False
                     )
                     
-                if process_state == "판매완료":
+                if process_state == '판매완료':
                     #판매 프로세스 '방문상담 '시간 작성
                     sales_process = SalesProcess.objects.get(estimate_id = estimate_id)
                     
@@ -527,7 +526,7 @@ class ConsultingView(View):
                         read          = False
                     )
                     
-                if process_state == "상담종료":
+                if process_state == '상담종료':
                     #판매 프로세스 '상담종료 '시간 작성
                     sales_process = SalesProcess.objects.get(estimate_id = estimate_id)
                     

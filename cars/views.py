@@ -1,7 +1,5 @@
 import json, jwt, requests
 
-from datetime import datetime, timedelta
-
 from django.http      import JsonResponse
 from django.views     import View
 from django.db.models import Sum
@@ -49,12 +47,13 @@ class SignInView(View):
         #회원가입 만 진행 후 작성 한 견적서가 없을 경우 했을 경우
         except Estimate.DoesNotExist:
             return JsonResponse({'message': 'SUCCESS_ESTIMATE_REQUIRED', 'access_token' : access_token}, status = 200)
+        
         except KeyError: 
             return JsonResponse({'message': 'KEY_ERROR'}, status = 400)
         # 우리 데이터에 해당 차량번호 등록되어 있지 않을 경우 에러메세지
         except Car.DoesNotExist:
             return JsonResponse({'message': 'MY_CAR_NOT_PRESENT_CAR_NUMBER'}, status = 400)
-        
+
 class SignUpView(View):
     #회원가입
     def post(self, request):
@@ -123,22 +122,22 @@ class SignUpView(View):
 class KakaoLoginView(View):
     def get(self, request):
         try:
-            kakao_token_api = "https://kauth.kakao.com/oauth/token"
+            kakao_token_api = 'https://kauth.kakao.com/oauth/token'
             data = {
-                "grant_type"  : "authorization_code",
-                "client_id"   : KAKAO_APPKEY,
-                "redirect_uri": KAKAO_REDIRECT_URI,
-                "code"        : request.GET.get("code")
+                'grant_type'  : 'authorization_code',
+                'client_id'   : KAKAO_APPKEY,
+                'redirect_uri': KAKAO_REDIRECT_URI,
+                'code'        : request.GET.get('code')
             }
             
             access_token = requests.post(kakao_token_api, data=data, timeout = 1).json().get('access_token')
-            user_info    = requests.get('https://kapi.kakao.com/v2/user/me', headers={"Authorization": f"Bearer {access_token}"}, timeout = 1).json()
-            kakao_id     = user_info["id"]
+            user_info    = requests.get('https://kapi.kakao.com/v2/user/me', headers={'Authorization': f'Bearer {access_token}'}, timeout = 1).json()
+            kakao_id     = user_info['id']
             
-            return JsonResponse({"message" : "SUCCESS", "kakao_id" : kakao_id}, status=200)
+            return JsonResponse({'message' : 'SUCCESS', 'kakao_id' : kakao_id}, status=200)
             
         except KeyError:
-            return JsonResponse({'message' : "KEY_ERROR"}, status=400) 
+            return JsonResponse({'message' : 'KEY_ERROR'}, status=400) 
 
 class CarNumberCheckView(View):
     # DB에 차량번호 조회만 진행 
@@ -255,21 +254,28 @@ class CarPriceView(View):
             i += 1
         
         # 차량시세 그래프 용 차량이름, 트림, 연식
-        cars_2 = TestCar.objects.filter\
-            (car_name = request.car.car_name, trim = request.car.trim, model_year = request.car.model_year)
-        price = cars_2.aggregate(Sum('transaction_price'))
+        cars_2 = TestCar.objects.filter(
+            car_name   = request.car.car_name, 
+            trim       = request.car.trim, 
+            model_year = request.car.model_year)
+        price  = cars_2.aggregate(Sum('transaction_price'))
         # 차량 예상가격
         estimated_price = price['transaction_price__sum'] / len(cars_2)
-        
         # 차량시세 그래프 용 차량이름, 트림 개수 / 추후 x개 이하 일 경우 데이터가 부족하다는 문구 띄울 예정
         count = len(cars_2)
         
-        model_year_index = model_year.index(max(model_year))
+        model_year_index        = model_year.index(max(model_year))
         transaction_price_index = transaction_price.index(max(transaction_price))
-        max_result = [model_year[model_year_index] + 1, transaction_price[transaction_price_index]]
+        max_result              = [model_year[model_year_index] + 1, transaction_price[transaction_price_index]]
         
-        model_year_index = model_year.index(min(model_year))
+        model_year_index        = model_year.index(min(model_year))
         transaction_price_index = transaction_price.index(min(transaction_price))
-        min_result = [model_year[model_year_index] - 1, transaction_price[transaction_price_index]]
+        min_result              = [model_year[model_year_index] - 1, transaction_price[transaction_price_index]]
 
-        return JsonResponse({'estimated_price': int(estimated_price), 'transaction_count' : count, 'transaction': transaction, 'max_result' : max_result, 'min_result' : min_result}, status=200)
+        return JsonResponse({
+            'estimated_price'   : int(estimated_price), 
+            'transaction_count' : count, 
+            'transaction'       : transaction, 
+            'max_result'        : max_result, 
+            'min_result'        : min_result
+        }, status=200)

@@ -1,7 +1,7 @@
 from django.http  import JsonResponse
 from django.views import View
 
-from cores.utils import login_decorator, admin_login_decorator
+from cores.utils          import login_decorator, admin_login_decorator
 from notifications.models import QuoteNotification
 
 class QuoteNotificationView(View):

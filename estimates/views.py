@@ -15,17 +15,17 @@ class EstimateView(View):
     # 견적서 작성
     def post(self, request): 
         try :
-            data                     = json.loads(request.body)
-            car                      = request.car
-            process_state            = data['process_state']
+            data          = json.loads(request.body)
+            car           = request.car
+            process_state = data['process_state']
             
             # 등록되어 있는 견적서가 이미 있을 경우 에러처리 [이전에 미리 확인 하나 서버 오류 등 발생 시 에러처리]
             if Estimate.objects.filter(car_id = car.id):
                 return JsonResponse({'message' : 'THE_ESTIMATE_ALREADY_EXISTS'}, status=404)
             # [transaction] 여러개의 create 처리 시 한건 이라도 처리 되지 않을 경우 전체 처리 X
             Estimate.objects.create(
-                car_id                   = car.id,
-                process_state            = process_state,
+                car_id        = car.id,
+                process_state = process_state,
             )
             
             return JsonResponse({'message': 'SUCCESS'}, status=200)
@@ -90,7 +90,7 @@ class EstimateView(View):
             estimate.other_special            = data.get('other_special', estimate.other_special)
             estimate.save()
             # 견적서 작성 완료 될 경우 판매 프로세스 시작 
-            if estimate.process_state == "신청완료":
+            if estimate.process_state == '신청완료':
                 with transaction.atomic():
                     if SalesProcess.objects.filter(estimate_id = estimate.id).exists():
                         return JsonResponse({'message' : 'THE_ESTIMATE_ALREADY_EXISTS'}, status=404)
@@ -104,7 +104,6 @@ class EstimateView(View):
                         car_address = address(estimate.address)
                         # 카카오내비로 고객 주소와 지점 주소 거리 계산
                         lode_map_result = lode_map(car_address[0],car_address[1])
-                        
                         # 카카오내비 범위 넘어갔을 경우 직선거리로 계산
                         if lode_map_result == 'RECONFIRM':
                             straight_distance_result = straight_distance(car_address[0],car_address[1])
@@ -134,7 +133,7 @@ class EstimateView(View):
                                 content       = '차량의 견적요청이 접수 되었습니다.',
                                 read          = False
                             )
-                return JsonResponse({'message': 'REQUEST_ESTIMATE_SUCCESS'}, status=200)
+                return JsonResponse({'message': 'SUCCESS'}, status=200)
             
             return JsonResponse({'message': 'SUCCESS'}, status=200)
         # 기본 키에러
@@ -178,11 +177,10 @@ class EstimateImageView(View):
                     image_info = [i],
                     image      = images[i],
                 )
-                print(i)
                 i += 1
                 
             # process_state 변경 
-            estimate.process_state = "사진등록"
+            estimate.process_state = '사진등록'
             estimate.save()
             return JsonResponse({'message': 'SUCCESS'}, status=200)
         

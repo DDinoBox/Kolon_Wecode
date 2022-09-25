@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/bin/bash
 
 echo "DEBUG=$DEBUG" > .env
 echo "SECRET_KEY=$SECRET_KEY" >> .env
@@ -12,6 +12,7 @@ echo "API_KEY=$API_KEY" >> .env
 echo "KAKAO_APPKEY=$KAKAO_APPKEY" >> .env
 echo "KAKAO_REDIRECT_URI=$KAKAO_REDIRECT_URI" >> .env
 
+cat .env
 python3 manage.py migrate --noinput
 
 python3 manage.py collectstatic --noinput

@@ -11,24 +11,24 @@ from dealers.models        import Dealer
 
 
 def validate_car_number(car_number):
-    REGEX_CAR = "^d{3,4}\[가-힣]{1}\d{4}$"
+    REGEX_CAR = '^d{3,4}\[가-힣]{1}\d{4}$'
     
     if not re.match(REGEX_CAR, car_number):
-        raise ValidationError("INVALID_CAR_NUMBER")
+        raise ValidationError('INVALID_CAR_NUMBER')
 
 def login_decorator(func):
     def wrapper(self, request, *args, **kwargs):
         try:
             access_token = request.headers.get('Authorization', None)
             payload      = jwt.decode(access_token, SECRET_KEY, ALGORITHM)
-            request.car = Car.objects.get(id= payload['id'])
-
+            request.car  = Car.objects.get(id= payload['id'])
+            
         except jwt.exceptions.DecodeError:
             return JsonResponse({'message' : 'INVALID_TOKEN'}, status = 400)
-
+        
         except Car.DoesNotExist:
             return JsonResponse({'message' : 'INVALID_USER'}, status = 400)
-
+        
         return func(self, request, *args, **kwargs)
     return wrapper
 
@@ -38,12 +38,12 @@ def admin_login_decorator(func):
             access_token   = request.headers.get('Authorization', None)
             payload        = jwt.decode(access_token, SECRET_KEY, ALGORITHM)
             request.dealer = Dealer.objects.get(id= payload['id'])
-
+            
         except jwt.exceptions.DecodeError:
             return JsonResponse({'message' : 'INVALID_TOKEN'}, status = 400)
-
+        
         except Dealer.DoesNotExist:
             return JsonResponse({'message' : 'INVALID_USER'}, status = 400)
-
+        
         return func(self, request, *args, **kwargs)
     return wrapper

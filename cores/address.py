@@ -5,17 +5,16 @@ from unittest import result
 import requests
 from haversine import haversine
 
-
-# from kolon_wecode.settings import API_KEY
 from dealers.models import Branch
 
 API_KEY='ecf899e71cb8d76d0534c9ec7b3f1c32'
 
 def address(addr):
-    url = 'https://dapi.kakao.com/v2/local/search/address.json?query={address}'.format(address=addr)
-    headers = {'Authorization': 'KakaoAK ' + API_KEY}
-    result = json.loads(str(requests.get(url, headers=headers).text))
+    url         = 'https://dapi.kakao.com/v2/local/search/address.json?query={address}'.format(address=addr)
+    headers     = {'Authorization': 'KakaoAK ' + API_KEY}
+    result      = json.loads(str(requests.get(url, headers=headers).text))
     match_first = result['documents'][0]['address']
+    
     return [float(match_first['x']), float(match_first['y'])]
 
 def lode_map(origin_x,origin_y):
